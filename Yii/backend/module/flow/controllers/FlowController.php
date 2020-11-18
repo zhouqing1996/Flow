@@ -20,6 +20,36 @@ class FlowController extends Controller
             ->andWhere(['status'=>1])
             ->one();
     }
+//    审批状态
+    public function Stage($s)
+    {
+        switch ($s)
+        {
+            case 1:
+                return '未审批';
+            case 2:
+                return '正在审批';
+            case 3:
+                return'完成审批';
+            default:
+                return '——';
+        }
+    }
+//    审批结果
+    public function Result($r)
+    {
+        switch ($r)
+        {
+            case 1:
+                return '同意审批';
+            case 2:
+                return '否定审批';
+            case 3:
+                return '未审批';
+            default:
+                return '——';
+        }
+    }
 //    获得个人的申请列表
 //参数：用户id
     public function actionGetflow()
@@ -38,53 +68,8 @@ class FlowController extends Controller
             {
                 $list[$i]['id']=$query[$i]['id'];
                 $list[$i]['name'] = $query[$i]['name'];
-                switch ($query[$i]['stage'])
-                {
-                    case 1:
-                    {
-                        $list[$i]['stage'] = '未审批';
-                        break;
-                    }
-                    case 2:
-                    {
-                        $list[$i]['stage'] = '正在审批';
-                        break;
-                    }
-                    case 3:
-                    {
-                        $list[$i]['stage'] = '完成审批';
-                        break;
-                    }
-                    default:
-                    {
-                        $list[$i]['stage']= '——';
-                        break;
-                    }
-                }
-                switch ($query[$i]['result'])
-                {
-                    case 1:
-                    {
-                        $list[$i]['result']= '同意审批';
-                        break;
-                    }
-                    case 2:
-                    {
-                        $list[$i]['result']= '否定审批';
-                        break;
-                    }
-                    case 3:
-                    {
-                        $list[$i]['result']= '未审批';
-                        break;
-                    }
-                    default:
-                    {
-                        $list[$i]['result']= '——';
-                        break;
-                    }
-
-                }
+                $list[$i]['stage'] =$this->Stage($query[$i]['stage']);
+                $list[$i]['result']= $this->Result($query[$i]['result']);
                 $list[$i]['ctime']=$query[$i]['ctime'];
                 $list[$i]['status']=$query[$i]['status'];
                 if($query[$i]['auth']==0)
@@ -164,5 +149,155 @@ class FlowController extends Controller
         {
             return array('data'=>[$deleteApp,$deleteApp2],'msg'=>'删除失败');
         }
+    }
+//    待审批的流程:(1)审批列表中人员id包含该id,且该流程当前审批人为该id之前的一个id,
+//  而且此审批没有被终止result!=2,审批没有完成，stage!=3
+//参数：用户id
+    public function actionPendmanage()
+    {
+        $request = \Yii::$app->request;
+        $uid = $request->post('id');
+        $query = (new Query())
+            ->select('*')
+            ->from('flows')
+            ->where(['or',['like','member',$uid]])
+            ->andWhere(['<>','stage',3])
+            ->andWhere(['<>','result',2])
+            ->andwhere(['status'=>1])
+            ->all();
+//        return array('data'=>$query,'msg'=>'sss');
+        if($query)
+        {
+            $list =[];
+            $k=0;
+            for($i=0;$i<count($query);$i++)
+            {
+                $member = explode(';',$query[$i]['member']);
+//                return array('data'=>[$member,$uid],'msg'=>'sss');
+                if($uid==$member[0])
+                {
+//                    第一个审批人
+                    $list[$k]['id']=$query[$i]['id'];
+                    $list[$k]['name'] = $query[$i]['name'];
+                    $list[$k]['userid']=$this->getUserName($query[$i]['userid'])['username'];
+                    $list[$k]['stage'] =$this->Stage($query[$i]['stage']);
+                    $list[$k]['auth']='--';
+                    $list[$k]['result']=$this->Result($query[$i]['result']);
+                    $list[$k]['ctime'] = $query[$i]['ctime'];
+                    $list[$k]['status'] = $query[$i]['status'];
+                    $k++;
+                }
+                else
+                {
+//                    查找当前审核用户的索引
+                    $index = array_search($query[$i]['auth'],$member);
+                    if($member[$index+1]==$uid)
+                    {
+                        $list[$k]['id']=$query[$i]['id'];
+                        $list[$k]['name'] = $query[$i]['name'];
+                        $list[$k]['userid']=$this->getUserName($query[$i]['userid'])['username'];
+                        $list[$k]['stage'] =$this->Stage($query[$i]['stage']);
+                        $list[$k]['auth']=$this->getUserName($query[$i]['auth'])['username'];
+                        $list[$k]['result']=$this->Result($query[$i]['result']);
+                        $list[$k]['ctime'] = $query[$i]['ctime'];
+                        $list[$k]['status'] = $query[$i]['status'];
+                        $k++;
+                    }
+                }
+            }
+            return array('data'=>$list,'msg'=>'待审批的文件');
+        }
+        else
+        {
+            return array('data'=>$query,'msg'=>'还没有待审批的文件');
+        }
+    }
+//    已审批的文件
+    public function actionFinishmanage()
+    {
+        $request = \Yii::$app->request;
+        $uid = $request->post('id');
+        $query = (new Query())
+            ->select('*')
+            ->from('flows')
+            ->where(['or',['member',$uid]])
+            ->andwhere(['status'=>1])
+            ->all();
+        $list = [];
+        for($i=0;$i<count($query);$i++)
+        {
+            $list[$i]['id']=$query[$i]['id'];
+            $list[$i]['name'] = $query[$i]['name'];
+            $list[$i]['userid']=$this->getUserName($query[$i]['userid'])['username'];
+            $list[$i]['stage'] =$this->Stage($query[$i]['stage']);
+            $list[$i]['auth']=$this->getUserName($query[$i]['auth'])['username'];
+            $list[$i]['result']=$this->Result($query[$i]['result']);
+            $list[$i]['ctime'] = $query[$i]['ctime'];
+            $list[$i]['status'] = $query[$i]['status'];
+        }
+        return array('data'=>$list,'msg'=>'已审批的文件');
+    }
+//    审批文件时查看申请表
+    public function actionLookmanage()
+    {
+        $request = \Yii::$app->request;
+        $mid = $request->post('id');
+//        基本 信息
+        $info = (new Query())
+            ->select('*')
+            ->from('flows')
+            ->where(['id'=>$mid])
+            ->one();
+        $info['userid']=$this->getUserName($info['userid'])['username'];
+        $info['member'] = explode(';',$info['member']);
+        for($i=0;$i<count($info['member']);$i++)
+        {
+            $info['member'][$i] = $this->getUserName($info['member'][$i])['username'];
+        }
+        if($info['auth']==0)
+        {
+            $info['auth']='--';
+        }
+        else
+        {
+            $info['auth'] =$this->getUserName($info['auth'])['username'];
+        }
+        $info['stage']=$this->Stage($info['stage']);
+        $info['result'] = $this->Result($info['result']);
+
+//        审批信息
+        $manageInfo = (new Query())
+            ->select('*')
+            ->from('flow')
+            ->where(['id'=>$mid])
+            ->all();
+        for($i=0;$i<count($manageInfo);$i++)
+        {
+            $manageInfo[$i]['userid'] = $this->getUserName($manageInfo[$i]['userid'])['username'];
+        }
+//        审批表内容
+        $appInfo = (new Query())
+            ->select('*')
+            ->from('detail')
+            ->where(['id'=>$mid])
+            ->all();
+
+        return array('data'=>[$info,$manageInfo,$appInfo],'msg'=>'申请表信息');
+    }
+//    审批
+    public function actionManage()
+    {
+        $request = \Yii::$app->request;
+        $mid = $request->post('mid');
+        $uid = $request->post('uid');
+        $flow = $request->post('flow');
+        $other = $request->post('other');
+        $query = (new Query())
+            ->select('*')
+            ->from('flows')
+            ->where(['id'=>$mid])
+            ->one();
+        $member = explode(';',$query['member']);
+        
     }
 }

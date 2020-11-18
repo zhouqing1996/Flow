@@ -23,6 +23,7 @@ import userCreateApp2 from '../pages/ordinary/application/CreateApp2'
 import userLookApp from '../pages/ordinary/application/LookApp'
 import userPendManage from '../pages/ordinary/manage/pendManage'
 import userFinishManage from '../pages/ordinary/manage/finishManage'
+import userLookManage from '../pages/ordinary/manage/LookManage'
 export default new Router({
   base:'/Flow/',
   mode:'hash',
@@ -119,7 +120,7 @@ export default new Router({
           meta: {
             isLogin: true
           },
-          component: true
+          component: userPendManage
         },
         {
         //  已审批
@@ -129,6 +130,15 @@ export default new Router({
             isLogin: true
           },
           component: userFinishManage
+        },
+        {
+        //  审批时查看申请表
+          path:'/user/manage/lookmanage',
+          name:'userLookManage',
+          meta:{
+            isLogin:true
+          },
+          component:userLookManage
         }
       ]
     },
