@@ -79,12 +79,12 @@
               if(role==1)
               {
                 //管理员
-                this.$router.push({path:'/question'})
+                this.$router.push({path:'/admin/index'})
               }
               else if(role==2)
               {
                 //教师
-                this.$router.push({path:'/u/question'})
+                this.$router.push({path:'/user/index'})
               }
               console.log(this.$store.getters.getsToken)
             }

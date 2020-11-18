@@ -1,0 +1,59 @@
+/*基础信息*/
+.title{
+  text-align: left;
+  margin-left: 50px;
+  margin-top: 50px;
+  color: #3d3d3d;
+  margin-bottom: 20px;
+}
+.content{
+  text-align: left;
+  margin-top: 10px;
+  margin-left: 50px;
+  margin-bottom: 10px;
+}
+.deleteItem{
+  width: auto;
+  padding: 7px;
+  font-size: 14px;
+  border-radius: 3px;
+  border: none;
+  color: white;
+  background-color: gray;
+  margin-left: 5px;
+  margin-top: 17px;
+  margin-bottom: 5px;
+}
+.deleteItem:hover{
+  background-color: #5FA7FE;
+}
+.addItem{
+  width: auto;
+  padding: 7px;
+  font-size: 14px;
+  border-radius: 3px;
+  border: none;
+  color: white;
+  background-color: goldenrod;
+  margin-left: 5px;
+  margin-top: 17px;
+  margin-bottom: 5px;
+}
+.addItem:hover{
+  background-color: #5FA7FE;
+}
+.submitItem{
+  width: auto;
+  padding: 7px;
+  font-size: 14px;
+  border-radius: 3px;
+  border: none;
+  color: white;
+  background-color: darksalmon;
+  margin-left: 5px;
+  margin-top: 17px;
+  margin-bottom: 5px;
+}
+.submitItem:hover{
+  background-color: #5FA7FE;
+}

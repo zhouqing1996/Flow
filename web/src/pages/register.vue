@@ -82,7 +82,13 @@
       },
       submitForm(formName) {
         var Reg = new RegExp(/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>,.\/]).{6,10}/)
-        if(!Reg.test(this.registerForm.password))
+        var No = new RegExp(/^[0-9]{6,20}/)
+        if(!No.test(this.registerForm.no))
+        {
+          this.$alert('工号不正确，应为6-20位的数字组成！', '警告', {
+            confirmButtonText: '确定',})
+        }
+        else if(!Reg.test(this.registerForm.password))
         {
           this.$alert('密码规则为：6-10位包含数字、字母、特殊字符的字串', '警告', {
             confirmButtonText: '确定',})

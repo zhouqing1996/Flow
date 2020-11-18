@@ -1,0 +1,19 @@
+/*主页*/
+.header{
+  background-color: #0ea0db;
+  width: 100%;
+}
+.aside{
+  background-color: #45B549;
+}
+.main{
+  background-color: #ffffff;
+  height: 80vh;
+}
+.footer{
+  background-color: red;
+}
+/*取消路由跳转中的下划线*/
+a{
+  text-decoration: none;
+}

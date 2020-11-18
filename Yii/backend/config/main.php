@@ -22,6 +22,9 @@ return [
         'home' => [
             'class' => 'backend\module\home\Module',
         ],
+        'flow'=>[
+            'class' =>'backend\module\flow\Module',
+        ]
     ],
     'components' => [
 //        邮箱发送配置

@@ -1,0 +1,68 @@
+
+ul li{
+  list-style: none;
+}
+/*表格样式*/
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 10px;
+}
+
+th {
+  font-size: 14px;
+  border: solid 1px #ccc;
+  font-weight: bold;
+  padding: 5px;
+  background-color: #F1F1F1;
+  text-align: center;
+}
+
+table, td {
+  border: solid 1px #ccc;
+  padding: 5px;
+  text-align: center;
+  font-size: 18px;
+}
+
+/*表格中的操作样式设计*/
+/*删除*/
+.delete{
+  width: auto;
+  padding: 7px;
+  font-size: 14px;
+  border-radius: 3px;
+  border: none;
+  color: white;
+  background-color: gray;
+  margin-left: 5px;
+  margin-top: 17px;
+  margin-bottom: 5px;
+}
+.delete:hover{
+  background-color: #5FA7FE;
+}
+/*修改*/
+.change{
+  width: auto;
+  padding: 7px;
+  font-size: 14px;
+  border-radius: 3px;
+  border: none;
+  color: white;
+  background-color: goldenrod;
+  margin-left: 5px;
+  margin-top: 17px;
+  margin-bottom: 5px;
+}
+.change:hover{
+  background-color: #5FA7FE;
+}
+.page{
+  margin-top: 50px;
+  position: fixed;
+  bottom: 80px;
+  width: 100%;
+  text-align: center;
+  clear:both;
+}
