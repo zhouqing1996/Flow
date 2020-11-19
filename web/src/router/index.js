@@ -21,6 +21,7 @@ import userIndex from "../pages/ordinary/userIndex";
 import userCreateApp from '../pages/ordinary/application/CreateApp'
 import userCreateApp2 from '../pages/ordinary/application/CreateApp2'
 import userLookApp from '../pages/ordinary/application/LookApp'
+import userLookApp2 from '../pages/ordinary/application/LookApp2'
 import userPendManage from '../pages/ordinary/manage/pendManage'
 import userFinishManage from '../pages/ordinary/manage/finishManage'
 import userLookManage from '../pages/ordinary/manage/LookManage'
@@ -112,6 +113,14 @@ export default new Router({
             isLogin: true
           },
           component: userLookApp
+        },
+        {
+          path:'/user/application/lookapp',
+          name:'userLookApp2',
+          meta:{
+            isLogin:true
+          },
+          component:userLookApp2
         },
         {
         //  待审批

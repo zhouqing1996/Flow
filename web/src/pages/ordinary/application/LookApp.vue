@@ -28,7 +28,8 @@
           <td>{{x.result}}</td>
           <td>{{x.ctime}}</td>
           <td>
-            <span>查看</span>
+            <span class="download" @click="downloadFile(x.id)">下载</span>
+            <span @click="LookApp(x.id)" class="look">查看</span>
             <span @click="deleteApp(x.id)" class="delete">删除</span>
           </td>
         </tr>
@@ -68,6 +69,25 @@
           this.getAppList()
       },
       methods:{
+        downloadFile:function(id)
+        {
+          let that = this
+          that.$http.post('/flow/download/download',{
+            id:id
+          }).then(function (res) {
+            console.log(res.data)
+            window.open(res.data.data[0])
+          })
+        },
+          LookApp:function(id)
+          {
+            this.$router.push({
+              path:'/user/application/lookapp',
+              query:{
+                id:id,
+              }
+            })
+          },
           deleteApp:function(id)
           {
             let that = this

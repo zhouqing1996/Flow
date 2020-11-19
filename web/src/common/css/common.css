@@ -82,6 +82,22 @@ table, td {
 .look:hover{
   background-color: #5FA7FE;
 }
+/*下载*/
+.download{
+  width: auto;
+  padding: 7px;
+  font-size: 14px;
+  border-radius: 3px;
+  border: none;
+  color: white;
+  background-color: darkturquoise;
+  margin-left: 5px;
+  margin-top: 17px;
+  margin-bottom: 5px;
+}
+.download:hover{
+  background-color: #5FA7FE;
+}
 
 /*标题*/
 .title{

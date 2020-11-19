@@ -50,6 +50,20 @@ class FlowController extends Controller
                 return '——';
         }
     }
+//    审批意见
+    public function Opinion($p)
+    {
+        switch ($p)
+        {
+            case 1:
+                return '通过';
+            case 2:
+                return '不通过';
+            default:
+                return '——';
+        }
+    }
+
 //    获得个人的申请列表
 //参数：用户id
     public function actionGetflow()
@@ -110,7 +124,7 @@ class FlowController extends Controller
         $appStage = 1;
         $appAuth = 0;
         $appResult = 3;
-        $appCtime = date('y-m-d h:i:s',time());
+        $appCtime = date('Y-m-d H:i:s',time());
         $appStatus =1;
         $appContent = $request->post('content');
 //        审批表中包含内容：审批项目，审批内容
@@ -165,7 +179,6 @@ class FlowController extends Controller
             ->andWhere(['<>','result',2])
             ->andwhere(['status'=>1])
             ->all();
-//        return array('data'=>$query,'msg'=>'sss');
         if($query)
         {
             $list =[];
@@ -173,10 +186,9 @@ class FlowController extends Controller
             for($i=0;$i<count($query);$i++)
             {
                 $member = explode(';',$query[$i]['member']);
-//                return array('data'=>[$member,$uid],'msg'=>'sss');
-                if($uid==$member[0])
+                if($uid==$member[0]&&$query[$i]['auth']==0)
                 {
-//                    第一个审批人
+//                    第一个审批人,且此时还未审批
                     $list[$k]['id']=$query[$i]['id'];
                     $list[$k]['name'] = $query[$i]['name'];
                     $list[$k]['userid']=$this->getUserName($query[$i]['userid'])['username'];
@@ -191,6 +203,7 @@ class FlowController extends Controller
                 {
 //                    查找当前审核用户的索引
                     $index = array_search($query[$i]['auth'],$member);
+//                    return array('data'=>$member[$index+1],'msg'=>'待审批的文件');
                     if($member[$index+1]==$uid)
                     {
                         $list[$k]['id']=$query[$i]['id'];
@@ -217,25 +230,39 @@ class FlowController extends Controller
     {
         $request = \Yii::$app->request;
         $uid = $request->post('id');
-        $query = (new Query())
+        $q = (new Query())
             ->select('*')
-            ->from('flows')
-            ->where(['or',['member',$uid]])
-            ->andwhere(['status'=>1])
+            ->from('flow')
+            ->where(['userid'=>$uid])
             ->all();
-        $list = [];
-        for($i=0;$i<count($query);$i++)
+        if($q)
         {
-            $list[$i]['id']=$query[$i]['id'];
-            $list[$i]['name'] = $query[$i]['name'];
-            $list[$i]['userid']=$this->getUserName($query[$i]['userid'])['username'];
-            $list[$i]['stage'] =$this->Stage($query[$i]['stage']);
-            $list[$i]['auth']=$this->getUserName($query[$i]['auth'])['username'];
-            $list[$i]['result']=$this->Result($query[$i]['result']);
-            $list[$i]['ctime'] = $query[$i]['ctime'];
-            $list[$i]['status'] = $query[$i]['status'];
+            $list = [];
+            for($j=0;$j<count($q);$j++)
+            {
+                $query = (new Query())
+                    ->select('*')
+                    ->from('flows')
+                    ->where(['id'=>$q[$j]['id']])
+                    ->andwhere(['status'=>1])
+                    ->one();
+                $list[$j]['id']=$query['id'];
+                $list[$j]['name'] = $query['name'];
+                $list[$j]['userid']=$this->getUserName($query['userid'])['username'];
+                $list[$j]['result']=$this->Result($query['result']);
+                $list[$j]['ctime'] = $query['ctime'];
+                $list[$j]['other'] = $q[$j]['other'];
+                $list[$j]['status'] = $query['status'];
+
+            }
+            return array('data'=>$list,'msg'=>'已审批的文件');
         }
-        return array('data'=>$list,'msg'=>'已审批的文件');
+        else
+        {
+            return array('data'=>$q,'msg'=>'没有已审批的文件');
+        }
+
+
     }
 //    审批文件时查看申请表
     public function actionLookmanage()
@@ -274,6 +301,7 @@ class FlowController extends Controller
         for($i=0;$i<count($manageInfo);$i++)
         {
             $manageInfo[$i]['userid'] = $this->getUserName($manageInfo[$i]['userid'])['username'];
+            $manageInfo[$i]['flow'] = $this->Opinion($manageInfo[$i]['flow']);
         }
 //        审批表内容
         $appInfo = (new Query())
@@ -297,7 +325,43 @@ class FlowController extends Controller
             ->from('flows')
             ->where(['id'=>$mid])
             ->one();
+        $Ctime = date('y-m-d h:i:s',time());
         $member = explode(';',$query['member']);
-        
+        if($member[count($member)-1]==$uid)
+        {
+            //            该用户为最后一个审批人,stage=3,审批结果为同意，审批人变为此时的人
+            if($flow==1)
+            {
+                $updateM1 = \Yii::$app->db->createCommand()->update('flows',['stage'=>3,'result'=>1,'auth'=>$uid],['id'=>$mid])->execute();
+            }
+            //            该用户为最后一个审批人,stage=3,审批结果为同意，
+            else
+            {
+                $updateM1 = \Yii::$app->db->createCommand()->update('flows',['stage'=>3,'result'=>2,'auth'=>$uid],['id'=>$mid])->execute();
+            }
+        }
+        else
+        {
+            //            该用户为最后一个审批人,stage=3,审批结果为同意，
+            if($flow==1)
+            {
+                $updateM1 = \Yii::$app->db->createCommand()->update('flows',['stage'=>2,'result'=>1,'auth'=>$uid],['id'=>$mid])->execute();
+            }
+            //            该用户为最后一个审批人,stage=3,审批结果为同意，
+            else
+            {
+                $updateM1 = \Yii::$app->db->createCommand()->update('flows',['stage'=>2,'result'=>2,'auth'=>$uid],['id'=>$mid])->execute();
+            }
+        }
+        $updateM2 = \Yii::$app->db->createCommand()->insert('flow',
+            array('id'=>$mid,'userid'=>$uid,'flow'=>$flow,'other'=>$other,'ftime'=>$Ctime,'status'=>1))->execute();
+        if($updateM1&&$updateM2)
+        {
+            return array('data'=>[$updateM1,$updateM2],'msg'=>'审批成功');
+        }
+        else
+        {
+            return array('data'=>[$updateM1,$updateM2],'msg'=>'审批失败');
+        }
     }
 }
