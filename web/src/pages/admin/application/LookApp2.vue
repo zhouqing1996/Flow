@@ -99,7 +99,7 @@
       methods:{
         goBack:function() {
             this.$router.push({
-              path: '/user/application/look',
+              path: '/admin/application/look',
             })
         },
         getAppList:function () {

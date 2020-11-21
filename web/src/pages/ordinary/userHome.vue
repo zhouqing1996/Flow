@@ -54,7 +54,8 @@
             </template>
             <el-menu-item index="2-1">
               <i class="el-icon-reading"></i>
-              模板申请</el-menu-item>
+              <router-link to="/user/application/formcreate">模板申请</router-link>
+            </el-menu-item>
             <el-menu-item index="2-2" >
               <i class="el-icon-folder-add"></i>
               <router-link to="/user/application/create">新建申请</router-link>

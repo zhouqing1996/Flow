@@ -3,7 +3,8 @@ namespace backend\module\flow\controllers;
 
 use yii\db\Query;
 use yii\web\Controller;
-
+header('Access-Control-Allow-Origin:*');
+header("Access-Control-Allow-Headers:Origin,X-Requested-With,Content-type,Accept");
 class FlowController extends Controller
 {
     public function actionIndex()
@@ -110,6 +111,38 @@ class FlowController extends Controller
             ->from('flows')
             ->max('id')+1;
     }
+    // 文件上传
+    public function actionUploadfile()
+    {
+        $path = \Yii::$app->basePath;
+        $filePath = $path.'/files/uploads/';
+        if(!is_dir($filePath))
+        {
+            mkdir(iconv('utf-8','GBK',$filePath),0777,true);
+        }
+        $filename=$_FILES["file"]["name"];
+        $fileName1 =explode('\\',$filename);
+        $fileName1 = $fileName1[count($fileName1)-1];
+        $fileName1 =explode('.',$fileName1);
+        $fileName1 =$fileName1[0];
+        $fileArr = explode('.',$filename);
+        if($fileArr[1]=='pdf')
+        {
+            $tempName=$fileName1.date("YmdHis").".".$fileArr[1];
+            move_uploaded_file($_FILES["file"]["tmp_name"], $filePath.$tempName);
+            $file = array('filename' => 'filename','dir'=>'filedir' );
+            $file['filename'] = $filename;
+            $url=explode('htdocs',$filePath.$tempName);
+            $url='http://127.0.0.1'.$url[1];
+            $file['dir'] = $url;
+            return array("data"=>[$tempName,$file['filename'],$file['dir']],"msg"=>"上传成功");
+        }
+        else
+        {
+            return array('data'=>0,'msg'=>'文件非pdf格式');
+        }
+
+    }
 //    创建新的申请
 //参数：用户id,申请表名，审批人列表，申请表中的内容
     public function actionCreateflow()
@@ -127,14 +160,41 @@ class FlowController extends Controller
         $appCtime = date('Y-m-d H:i:s',time());
         $appStatus =1;
         $appContent = $request->post('content');
+        $appDoc = $request->post('doc');
+        $appLongText = $request->post('longText');
 //        审批表中包含内容：审批项目，审批内容
-        for($i=0;$i<count($appContent);$i++)
+        if(count($appContent)>0)
         {
-            $fid = $i+1;
-            $fname = $appContent[$i]['fname'];
-            $fcontent = $appContent[$i]['fcontent'];
-            $insertF = \Yii::$app->db->createCommand()->insert('detail',
-            array('id'=>$id,'fid'=>$fid,'fname'=>$fname,'content'=>$fcontent,'status'=>1))->execute();
+            for($i=0;$i<count($appContent);$i++)
+            {
+                $fid = $i+1;
+                $fname = $appContent[$i]['fname'];
+                $fcontent = $appContent[$i]['fcontent'];
+                $insertC = \Yii::$app->db->createCommand()->insert('detail',
+                    array('id'=>$id,'fid'=>$fid,'fname'=>$fname,'ftype'=>1,'content'=>$fcontent,'status'=>1))->execute();
+            }
+        }
+        if(count($appDoc)>0)
+        {
+            for($i=0;$i<count($appDoc);$i++)
+            {
+                $fid = $i+1;
+                $fname = $appDoc[$i]['fname'];
+                $furl = $appDoc[$i]['filedir'];
+                $insertD = \Yii::$app->db->createCommand()->insert('detail',
+                    array('id'=>$id,'fid'=>$fid,'fname'=>$fname,'ftype'=>2,'content'=>$furl,'status'=>1))->execute();
+            }
+        }
+        if(count($appLongText)>0)
+        {
+            for($i=0;$i<count($appLongText);$i++)
+            {
+                $fid = $i+1;
+                $fname = $appContent[$i]['fname'];
+                $fcontent = $appContent[$i]['fcontent'];
+                $insertL = \Yii::$app->db->createCommand()->insert('detail',
+                    array('id'=>$id,'fid'=>$fid,'fname'=>$fname,'ftype'=>3,'content'=>$fcontent,'status'=>1))->execute();
+            }
         }
         $insertApp = \Yii::$app->db->createCommand()->insert('flows',
         array('id'=>$id,'name'=>$appName,'userid'=>$appUserid,'member'=>$appMember,
@@ -309,8 +369,36 @@ class FlowController extends Controller
             ->from('detail')
             ->where(['id'=>$mid])
             ->all();
+        $list = [];
+        for($i=0;$i<count($appInfo);$i++)
+        {
+            if($appInfo[$i]['ftype']==2)
+            {
+                $list[$i]['ftype']=$appInfo[$i]['ftype'];
+                $list[$i]['id']=$appInfo[$i]['id'];
+                $list[$i]['fid']=$appInfo[$i]['fid'];
+                $list[$i]['fname']=$appInfo[$i]['fname'];
+                $list[$i]['url']=$appInfo[$i]['content'];
+                $name = explode('\\',$appInfo[$i]['content']);
+                $name = explode('/',$name[count($name)-1]);
+                $name = explode('.',$name[count($name)-1]);
+                $list[$i]['filename'] = substr($name[0],0,-14);
+//                return array('data'=>$name,'msg'=>'sss');
 
-        return array('data'=>[$info,$manageInfo,$appInfo],'msg'=>'申请表信息');
+                $list[$i]['status']=$appInfo[$i]['status'];
+            }
+            else
+            {
+                $list[$i]['id']=$appInfo[$i]['id'];
+                $list[$i]['fid']=$appInfo[$i]['fid'];
+                $list[$i]['fname']=$appInfo[$i]['fname'];
+                $list[$i]['content']=$appInfo[$i]['content'];
+                $list[$i]['status']=$appInfo[$i]['status'];
+                $list[$i]['ftype']=$appInfo[$i]['ftype'];
+            }
+        }
+
+        return array('data'=>[$info,$manageInfo,$list],'msg'=>'申请表信息');
     }
 //    审批
     public function actionManage()
@@ -362,6 +450,46 @@ class FlowController extends Controller
         else
         {
             return array('data'=>[$updateM1,$updateM2],'msg'=>'审批失败');
+        }
+    }
+//    管理员管理
+    public function actionQueryapp()
+    {
+        $query = (new Query())
+            ->select('*')
+            ->from('flows')
+            ->all();
+        if($query)
+        {
+            $list = [];
+            for($i=0;$i<count($query);$i++)
+            {
+                $list[$i]['id']=$query[$i]['id'];
+                $list[$i]['name'] = $query[$i]['name'];
+                $list[$i]['userid']=$this->getUserName($query[$i]['userid'])['username'];
+                $list[$i]['member'] = explode(';',$query[$i]['member']);
+                for($j=0;$j<count($list[$i]['member']);$j++)
+                {
+                    $list[$i]['member'][$j] = $this->getUserName($list[$i]['member'][$j])['username'];
+                }
+                $list[$i]['stage'] =$this->Stage($query[$i]['stage']);
+                $list[$i]['result']= $this->Result($query[$i]['result']);
+                $list[$i]['ctime']=$query[$i]['ctime'];
+                $list[$i]['status']=$query[$i]['status'];
+                if($query[$i]['auth']==0)
+                {
+                    $list[$i]['auth'] = '--';
+                }
+                else
+                {
+                    $list[$i]['auth']=$this->getUserName($query[$i]['auth'])['username'];
+                }
+            }
+            return array('data'=>$list,'msg'=>'申请信息');
+        }
+        else
+        {
+            return array('data'=>1,'msg'=>'还未有申请');
         }
     }
 }

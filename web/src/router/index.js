@@ -14,6 +14,9 @@ import Index from '../pages/Home'
 import adminHome from "../pages/admin/adminHome";
 import adminIndex from "../pages/admin/adminIndex";
 import adminUser from '../pages/admin/User'
+import adminLookApp from '../pages/admin/application/LookApp'
+import adminLookApp2 from '../pages/admin/application/LookApp2'
+
 
 //普通用户
 import userHome from "../pages/ordinary/userHome";
@@ -25,6 +28,7 @@ import userLookApp2 from '../pages/ordinary/application/LookApp2'
 import userPendManage from '../pages/ordinary/manage/pendManage'
 import userFinishManage from '../pages/ordinary/manage/finishManage'
 import userLookManage from '../pages/ordinary/manage/LookManage'
+import userFormCreate from '../pages/ordinary/application/FormCreate'
 export default new Router({
   base:'/Flow/',
   mode:'hash',
@@ -61,7 +65,23 @@ export default new Router({
             isLogin: true
           },
           component:My
-        }
+        },
+        {
+          path:'/admin/application/look',
+          name:'adminLook',
+          meta:{
+            isLogin:true
+          },
+          component:adminLookApp
+        },
+        {
+          path:'/admin/application/lookapp',
+          name:'adminLook2',
+          meta:{
+            isLogin:true
+          },
+          component:adminLookApp2
+        },
       ]
     },
     {
@@ -96,6 +116,14 @@ export default new Router({
             isLogin: true
           },
           component: userCreateApp
+        },
+        {
+          path:'/user/application/formcreate',
+          name:'suerFormCreate',
+          meta:{
+            isLogin:true
+          },
+          component:userFormCreate
         },
         {
           //申请表内容

@@ -27,9 +27,6 @@
             <i class="el-icon-coin"></i>
             <span @click="logout">退出登录</span>
           </el-menu-item>
-          <el-menu-item index="2-3">
-            选项3
-          </el-menu-item>
         </el-submenu>
       </el-menu>
     </el-header>
@@ -53,34 +50,41 @@
               <router-link to="/admin/user">用户管理</router-link>
             </span>
           </el-menu-item>
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-position"></i>
-              <span>审批管理</span>
-            </template>
-            <el-menu-item index="2-1">
-              <i class="el-icon-document"></i>
-              待审批</el-menu-item>
-            <el-menu-item index="2-2">
-              <i class="el-icon-finished"></i>
-                已审批</el-menu-item>
-            <el-menu-item index="2-3">选项3</el-menu-item>
-          </el-submenu>
-          <el-submenu index="3">
-            <template slot="title">
-              <i class="el-icon-suitcase"></i>
-              <span>申请管理</span>
-            </template>
-            <el-menu-item index="3-1">
-              <i class="el-icon-reading"></i>
-              模板申请</el-menu-item>
-            <el-menu-item index="3-2" >
-              <i class="el-icon-folder-add"></i>
-              新建申请</el-menu-item>
-            <el-menu-item index="3-3">
-              <i class="el-icon-view"></i>
-              申请查看</el-menu-item>
-          </el-submenu>
+          <el-menu-item index="2">
+            <i class="el-icon-user"></i>
+            <span slot="title">
+              <router-link to="/admin/application/look">申请管理</router-link>
+            </span>
+          </el-menu-item>
+          <!--<el-submenu index="2">-->
+            <!--<template slot="title">-->
+              <!--<i class="el-icon-position"></i>-->
+              <!--<span>审批管理</span>-->
+            <!--</template>-->
+            <!--<el-menu-item index="2-1">-->
+              <!--<i class="el-icon-document"></i>-->
+              <!--<router-link to="/admin/user">待审批</router-link>-->
+            <!--</el-menu-item>-->
+            <!--<el-menu-item index="2-2">-->
+              <!--<i class="el-icon-finished"></i>-->
+                <!--已审批</el-menu-item>-->
+            <!--<el-menu-item index="2-3">选项3</el-menu-item>-->
+          <!--</el-submenu>-->
+          <!--<el-submenu index="3">-->
+            <!--<template slot="title">-->
+              <!--<i class="el-icon-suitcase"></i>-->
+              <!--<span>申请管理</span>-->
+            <!--</template>-->
+            <!--&lt;!&ndash;<el-menu-item index="3-1">&ndash;&gt;-->
+              <!--&lt;!&ndash;<i class="el-icon-reading"></i>&ndash;&gt;-->
+              <!--&lt;!&ndash;模板申请</el-menu-item>&ndash;&gt;-->
+            <!--<el-menu-item index="3-2" >-->
+              <!--<i class="el-icon-folder-add"></i>-->
+              <!--新建申请</el-menu-item>-->
+            <!--<el-menu-item index="3-3">-->
+              <!--<i class="el-icon-view"></i>-->
+              <!--申请查看</el-menu-item>-->
+          <!--</el-submenu>-->
         </el-menu>
       </el-aside>
       <el-container>

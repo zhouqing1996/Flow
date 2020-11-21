@@ -102,13 +102,41 @@ class DownloadController extends Controller
             $manageInfo[$i]['flow'] = $this->Opinion($manageInfo[$i]['flow']);
         }
 //        审批表内容
+//        $appInfo = (new Query())
+//            ->select('*')
+//            ->from('detail')
+//            ->where(['id'=>$mid])
+//            ->all();
         $appInfo = (new Query())
             ->select('*')
             ->from('detail')
             ->where(['id'=>$mid])
             ->all();
+        $list = [];
+        for($i=0;$i<count($appInfo);$i++)
+        {
+            $list[$i]['num']=$i;
+            $list[$i]['id']=$appInfo[$i]['id'];
+            $list[$i]['ftype']=$appInfo[$i]['ftype'];
+            $list[$i]['fid']=$appInfo[$i]['fid'];
+            $list[$i]['fname']=$appInfo[$i]['fname'];
+            $list[$i]['status']=$appInfo[$i]['status'];
+            if($appInfo[$i]['ftype']==2)
+            {
+                $list[$i]['url']=$appInfo[$i]['content'];
+                $name = explode('\\',$appInfo[$i]['content']);
+                $name = explode('/',$name[count($name)-1]);
+                $name=explode('.',$name[count($name)-1]);
+                $list[$i]['filename'] = substr($name[0],0,-14);
+                $list[$i]['filename']=$list[$i]['filename'].'.pdf';
+            }
+            else
+            {
+                $list[$i]['content']=$appInfo[$i]['content'];
+            }
+        }
 
-        return array('data'=>[$info,$manageInfo,$appInfo],'msg'=>'申请表信息');
+        return array('data'=>[$info,$manageInfo,$list],'msg'=>'申请表信息');
     }
     public function actionDownload()
     {
@@ -270,18 +298,28 @@ class DownloadController extends Controller
         $pdf->SetTextColor(0, 0, 0);
         for($i=0;$i<count($appInfo);$i++)
         {
-            $pdf->MultiCell($w=40, $h=20, $txt=$appInfo[$i]['fname'], $border=1, $align='C', $fill=true, $ln=0, $x='' ,$y='',$reseth=true,
-                $stretch=0,$ishtml=false,$autopadding=true,$maxh=0,$valign='M',$fitcell=true);
-            $pdf->MultiCell($w=40, $h=20, $txt=$appInfo[$i]['content'], $border=1, $align='C', $fill=true, $ln=0, $x='' ,$y='',$reseth=true,
-                $stretch=0,$ishtml=false,$autopadding=true,$maxh=0,$valign='M',$fitcell=true);
-            if(($appInfo[$i]['fid'])%2==0)
+            if($i!=0&&$i%2==0)
             {
                 $pdf->Ln(20);
             }
+            if($appInfo[$i]['ftype']==2)
+            {
+                $pdf->MultiCell($w=40, $h=20, $txt=$appInfo[$i]['fname'], $border=1, $align='C', $fill=true, $ln=0, $x='' ,$y='',$reseth=true,
+                    $stretch=0,$ishtml=false,$autopadding=true,$maxh=0,$valign='M',$fitcell=true);
+                $pdf->MultiCell($w=40, $h=20, $txt=$appInfo[$i]['filename'], $border=1, $align='C', $fill=true, $ln=0, $x='' ,$y='',$reseth=true,
+                    $stretch=0,$ishtml=false,$autopadding=true,$maxh=0,$valign='M',$fitcell=true);
+            }
+            else{
+                $pdf->MultiCell($w=40, $h=20, $txt=$appInfo[$i]['fname'], $border=1, $align='C', $fill=true, $ln=0, $x='' ,$y='',$reseth=true,
+                    $stretch=0,$ishtml=false,$autopadding=true,$maxh=0,$valign='M',$fitcell=true);
+                $pdf->MultiCell($w=40, $h=20, $txt=$appInfo[$i]['content'], $border=1, $align='C', $fill=true, $ln=0, $x='' ,$y='',$reseth=true,
+                    $stretch=0,$ishtml=false,$autopadding=true,$maxh=0,$valign='M',$fitcell=true);
+            }
+
         }
         $title = $Info['id'];
         $path = \Yii::$app->basePath;
-        $filePath = $path.'/files/';
+        $filePath = $path.'/files/downloads/';
         if(!is_dir($filePath))
         {
             mkdir(iconv('utf-8','GBK',$filePath),0777,true);

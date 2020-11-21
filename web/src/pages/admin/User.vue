@@ -82,7 +82,7 @@
           //添加用户
           dialogAdd:false,
           addUser:{
-            no:'',
+            no:0,
             name:'',
             role:'',
           },

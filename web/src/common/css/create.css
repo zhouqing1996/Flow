@@ -57,3 +57,9 @@
 .submitItem:hover{
   background-color: #5FA7FE;
 }
+.subcontent{
+  text-align: left;
+  margin-top: 10px;
+  margin-left: 80px;
+  margin-bottom: 10px;
+}
