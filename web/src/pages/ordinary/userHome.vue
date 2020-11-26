@@ -8,27 +8,23 @@
         mode="horizontal"
         :unique-opened="true"
         style="font-size: 30px!important;font-weight: bold;float: right">
-        <el-menu-item index="1">
-          <i class="el-icon-star-off"></i>
-          <span slot="title">
-              <router-link to="/user/index">网站首页</router-link>
-            </span>
+        <el-menu-item index="1" style="width: 150px">
+          <!--<i class="el-icon-star-off"></i>-->
+            <router-link to="/user/index" class="el-icon-star-off">网站首页</router-link>
         </el-menu-item>
         <el-submenu index="2">
           <template slot="title">
-            <i class="el-icon-user"></i>
+            <span class="el-icon-user"></span>
             {{username}}
           </template>
           <el-menu-item index="2-1">
-            <i class="el-icon-help"></i>
-            <router-link to="/user/my">个人信息</router-link>
+            <!--<i class="el-icon-help"></i>-->
+              <!--<span class="el-icon-help"></span>-->
+              <router-link to="/user/my" class="el-icon-help">个人信息</router-link>
           </el-menu-item>
           <el-menu-item index="2-2">
-            <i class="el-icon-coin"></i>
-            <span @click="logout">退出登录</span>
-          </el-menu-item>
-          <el-menu-item index="2-3">
-            选项3
+            <!--<i class="el-icon-coin"></i>-->
+            <span @click="logout" class="el-icon-coin">退出登录</span>
           </el-menu-item>
         </el-submenu>
       </el-menu>
@@ -36,47 +32,38 @@
     <el-container>
       <el-aside width="200px" class="aside">
         <el-menu
-          background-color="#545c64"
+          background-color="#FF7F24"
           text-color="#fff"
-          active-text-color="#ffd04b"
+          active-text-color="#3A5FCD"
           :unique-opened="true"
           style="font-size: 30px!important;font-weight: bold">
           <el-menu-item index="1">
-            <i class="el-icon-star-off"></i>
-            <span slot="title">
-              <router-link to="/user/index">网站首页</router-link>
-            </span>
+            <!--<i class="el-icon-star-off"></i>-->
+              <router-link to="/user/index" class="el-icon-star-off">网站首页</router-link>
           </el-menu-item>
           <el-submenu index="2">
             <template slot="title">
-              <i class="el-icon-suitcase"></i>
-              <span>申请管理</span>
+              <span class="el-icon-suitcase">申请管理</span>
             </template>
-            <el-menu-item index="2-1">
-              <i class="el-icon-reading"></i>
-              <router-link to="/user/application/formcreate">模板申请</router-link>
+            <el-menu-item index="2-1" >
+                <!--<i class="el-icon-folder-add"></i>-->
+              <router-link to="/user/application/create" class="el-icon-folder-add">新建申请</router-link>
             </el-menu-item>
-            <el-menu-item index="2-2" >
-              <i class="el-icon-folder-add"></i>
-              <router-link to="/user/application/create">新建申请</router-link>
-            </el-menu-item>
-            <el-menu-item index="2-3">
-              <i class="el-icon-view"></i>
-              <router-link to="/user/application/look">查看申请</router-link>
+            <el-menu-item index="2-2">
+                <!--<i class="el-icon-view"></i>-->
+                <router-link to="/user/application/look" class="el-icon-view">查看申请</router-link>
             </el-menu-item>
           </el-submenu>
           <el-submenu index="3">
             <template slot="title">
-              <i class="el-icon-position"></i>
-              <span>审批管理</span>
+              <span class="el-icon-position">审批管理</span>
             </template>
             <el-menu-item index="3-1">
-              <i class="el-icon-document"></i>
-              <router-link to="/user/manage/pendmanage">待审批</router-link>
+                <router-link to="/user/manage/pendmanage" class="el-icon-folder">待审批</router-link>
             </el-menu-item>
             <el-menu-item index="3-2">
-              <i class="el-icon-finished"></i>
-              <router-link to="/user/manage/finishmanage">已审批</router-link>
+                <!--<i class="el-icon-finished"></i>-->
+                <router-link to="/user/manage/finishmanage" class="el-icon-finished">已审批</router-link>
             </el-menu-item>
           </el-submenu>
 

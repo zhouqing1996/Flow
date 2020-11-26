@@ -27,4 +27,5 @@
 
 <style scoped>
   @import "../../common/css/index.css";
+
 </style>

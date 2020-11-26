@@ -8,10 +8,10 @@
       </el-breadcrumb>
       <el-divider></el-divider>
     </div>
-    <div v-if="appList.length==0">
-      {{username}}还未有任何申请！
-    </div>
-    <div v-else>
+    <!--<div v-if="appList.length==0">-->
+      <!--{{username}}还未有任何申请！-->
+    <!--</div>-->
+    <div >
       <table>
         <th>申请编号</th>
         <th>申请人</th>

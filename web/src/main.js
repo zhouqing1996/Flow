@@ -1,11 +1,13 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from 'vue'
-import App from './App'
-import router from './router'
 import ElementUI from 'element-ui'
-import Vuex from 'vuex'
 import 'element-ui/lib/theme-chalk/index.css';
+Vue.use(ElementUI)
+import Vue from 'vue'
+
+import Vuex from 'vuex'
+
+import App from './App'
 import Axios from 'axios'
 import store from './store/index'
 //编辑器
@@ -14,7 +16,7 @@ import initVueHtml5 from "./common/initVueHtml5.js";
 //图表
 import echarts from 'echarts'
 Vue.prototype.$echarts = echarts
-
+import router from './router'
 Vue.prototype.$http = Axios
 Axios.interceptors.request.use(function (config) {
   // config.headers="Access-Control-Allow-Origin: *";
@@ -35,7 +37,7 @@ router.beforeEach((to,from,next)=> {
     return next();
   }
 })
-Vue.use(ElementUI)
+
 Vue.use(Vuex)
 Vue.config.productionTip = false
 Vue.use(initVueHtml5)

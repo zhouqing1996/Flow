@@ -69,7 +69,7 @@
           <tr v-for="(x,index) in appInfo">
             <td>{{x.fname}}</td>
             <td v-if="x.ftype==2">
-              <a :href="x.url">{{x.filename}}</a>
+              <a :href="x.url">{{x.filename}}.pdf</a>
               <!--<span @click="x.url">{{x.filename}}</span>-->
             </td>
             <td v-else>{{x.content}}</td>

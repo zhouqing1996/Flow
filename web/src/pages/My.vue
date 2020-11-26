@@ -47,5 +47,6 @@
 </script>
 
 <style scoped>
- @import '../common/css/my.css'
+ @import '../common/css/my.css';
+
 </style>

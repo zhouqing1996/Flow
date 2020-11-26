@@ -165,15 +165,19 @@
             this.createList.doc[i]['filename']=this.filename[i]
             this.createList.doc[i]['filedir']=this.filedir[i]
           }
-          if(this.createList.content==null || (this.createList.content!=null &&this.createList.content.length==0)||
-            this.createList.doc==null || (this.createList.doc!=null &&this.createList.doc.length==0)||
-            this.createList.longText==null || (this.createList.longText!=null &&this.createList.longText.length==0))
+          if(this.createList.content==null || (this.createList.content!=null &&this.createList.content.length==0))
           {
-            this.$alert('请填写审批内容', '提示', {
-              confirmButtonText: '确定',
-              type:'warning',
-              center: true
-            })
+            if(this.createList.doc==null || (this.createList.doc!=null &&this.createList.doc.length==0))
+            {
+              if(this.createList.longText==null || (this.createList.longText!=null &&this.createList.longText.length==0))
+              {
+                this.$alert('请填写审批内容', '提示', {
+                  confirmButtonText: '确定',
+                  type:'warning',
+                  center: true
+                })
+              }
+            }
           }
           else
           {

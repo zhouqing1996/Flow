@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 //404错误
 import NotFound from '../pages/404'
-Vue.use(Router)
+
 import My from '../pages/My'
 import ChangePwd from '../pages/Changepwd'
 import Register from '../pages/register'
@@ -29,6 +29,7 @@ import userPendManage from '../pages/ordinary/manage/pendManage'
 import userFinishManage from '../pages/ordinary/manage/finishManage'
 import userLookManage from '../pages/ordinary/manage/LookManage'
 import userFormCreate from '../pages/ordinary/application/FormCreate'
+Vue.use(Router)
 export default new Router({
   base:'/Flow/',
   mode:'hash',

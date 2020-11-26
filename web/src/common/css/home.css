@@ -4,7 +4,10 @@
   width: 100%;
 }
 .aside{
-  background-color: #45B549;
+  background-color: #FF7F24;
+  color: #FFFFFF;
+  font-size: 20px;
+  font-weight: bold;
 }
 .main{
   background-color: #ffffff;
